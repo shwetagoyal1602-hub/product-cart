@@ -25,7 +25,7 @@ export default function Cart({ navigation }) {
             width: 30,
           }}
           source={require('../assets/images/delete.png')}
-        />{' '}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -35,6 +35,8 @@ export default function Cart({ navigation }) {
       <View style={styles.header}>
         <TouchableOpacity
           testID="home_icon"
+          accessible={true}
+          accessibilityLabel='home_icon'
           onPress={() => navigation.goBack()}
         >
           <Image

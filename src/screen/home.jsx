@@ -29,6 +29,8 @@ export default function Home({ navigation }) {
         <View style={styles.icons}>
           <TouchableOpacity
             testID="cart_icon"
+            accessibilityLabel='cart_icon'
+            accessible={true}
             onPress={() => navigation.navigate('Cart')}
             style={{ marginRight: 15 }}
           >
@@ -60,10 +62,13 @@ export default function Home({ navigation }) {
         </View>
       </View>
       <FlatList
+        testID="product_list"
         data={PRODUCTS}
         renderItem={renderItem}
         keyExtractor={item => item.id.toString()}
         numColumns={2}
+        windowSize={20}
+        initialNumToRender={20}
       />
       <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalOverlay}>
