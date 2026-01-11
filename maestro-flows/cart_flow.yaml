@@ -1,0 +1,16 @@
+appId: "com.shoppingapp"
+---
+- launchApp
+
+- tapOn:
+    id: "product_4_add_button"
+
+
+- tapOn:
+    id: "cart_icon"
+
+- tapOn:
+    id: "cart_item_delete_4"
+
+- tapOn:
+    id: "home_icon"

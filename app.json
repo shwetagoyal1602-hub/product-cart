@@ -1,4 +1,9 @@
 {
   "name": "ShoppingApp",
-  "displayName": "ShoppingApp"
+  "displayName": "ShoppingApp",
+  "extra": {
+    "eas": {
+      "projectId": "3bfcec59-20a8-4cf2-a1d6-de7e771dedd1"
+    }
+  }
 }

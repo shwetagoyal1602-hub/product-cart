@@ -3,6 +3,6 @@
   "compilerOptions": {
     "types": ["jest"],
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "App.jsx", "src/component/productCard.jsx", "src/screen/cart.jsx", "src/screen/home.jsx"],
   "exclude": ["**/node_modules", "**/Pods"]
 }
