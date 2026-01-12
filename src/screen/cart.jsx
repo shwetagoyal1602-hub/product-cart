@@ -12,18 +12,17 @@ import { CartContext } from '../context/cartContext';
 export default function Cart({ navigation }) {
   const { cart, removeFromCart } = useContext(CartContext);
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item, index }) => (
     <View style={styles.item}>
       <Text>{item.name}</Text>
+
       <TouchableOpacity
-        testID={`cart_item_delete_${item.id}`}
-        onPress={() => removeFromCart(item.id)}
+        testID={`cart_item_delete_${index + 1}`}
+        accessibilityLabel={`cart_item_delete_${index + 1}`}
+        onPress={() => removeFromCart(item.uniqueId)}
       >
         <Image
-          style={{
-            height: 30,
-            width: 30,
-          }}
+          style={{ height: 30, width: 30 }}
           source={require('../assets/images/delete.png')}
         />
       </TouchableOpacity>
@@ -35,31 +34,26 @@ export default function Cart({ navigation }) {
       <View style={styles.header}>
         <TouchableOpacity
           testID="home_icon"
-          accessible={true}
-          accessibilityLabel='home_icon'
+          accessibilityLabel="home_icon"
           onPress={() => navigation.goBack()}
         >
           <Image
-            style={{
-              height: 30,
-              width: 30,
-            }}
+            style={{ height: 30, width: 30 }}
             source={require('../assets/images/goBack.png')}
           />
         </TouchableOpacity>
+
         <Text style={styles.title}>Cart</Text>
       </View>
 
       {cart.length === 0 ? (
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
+        <View style={styles.empty}>
           <Text>No items in cart</Text>
         </View>
       ) : (
         <FlatList
           data={cart}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={item => item.uniqueId}
           renderItem={renderItem}
         />
       )}
@@ -75,12 +69,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#eee',
   },
-  title: { fontSize: 20, fontWeight: 'bold', marginLeft: 15 },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 15,
+  },
   item: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 15,
     borderBottomWidth: 1,
     borderColor: '#ccc',
+  },
+  empty: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

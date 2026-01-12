@@ -1,8 +1,12 @@
-appId: "com.shoppingapp"
+appId: com.shoppingapp
 ---
 - launchApp
 
-- assertVisible: "product_list"
+- assertVisible:
+    id: "product_1_add_button"
+
+- assertVisible:
+    id: "product_4_add_button"
 
 - tapOn:
     id: "product_4_add_button"
@@ -10,5 +14,11 @@ appId: "com.shoppingapp"
 - tapOn:
     id: "cart_icon"
 
+- assertVisible:
+    text: "Cart"
+
 - tapOn:
-    id: "cart_item_delete_4"
+    id: "cart_item_delete_1"
+
+- tapOn:
+    id: "home_icon"

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Image,
   Modal,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import ProductCard from '../component/productCard';
 import { CartContext } from '../context/cartContext';
@@ -19,8 +20,40 @@ const PRODUCTS = Array.from({ length: 20 }, (_, i) => ({
 export default function Home({ navigation }) {
   const { cart } = useContext(CartContext);
   const [modalVisible, setModalVisible] = useState(false);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  const renderItem = ({ item }) => <ProductCard product={item} />;
+  const paginatedData = useMemo(() => {
+    return Array.from({ length: page }).flatMap((_, pageIndex) =>
+      PRODUCTS.map((product, productIndex) => ({
+        ...product,
+        __page: pageIndex,
+        __index: productIndex,
+      })),
+    );
+  }, [page]);
+
+  const loadMore = () => {
+    if (loading) return;
+
+    setLoading(true);
+    setTimeout(() => {
+      setPage(prev => prev + 1);
+      setLoading(false);
+    }, 800);
+  };
+
+  const renderItem = ({ item, index }) => {
+    const uniqueId = `${item.id}_${item.__page}_${item.__index}`;
+    const visibleIndex = index + 1;
+    return (
+      <ProductCard
+        product={item}
+        uniqueId={uniqueId}
+        visibleIndex={visibleIndex}
+      />
+    );
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -29,16 +62,12 @@ export default function Home({ navigation }) {
         <View style={styles.icons}>
           <TouchableOpacity
             testID="cart_icon"
-            accessibilityLabel='cart_icon'
-            accessible={true}
+            accessibilityLabel="cart_icon"
             onPress={() => navigation.navigate('Cart')}
             style={{ marginRight: 15 }}
           >
             <Image
-              style={{
-                height: 30,
-                width: 30,
-              }}
+              style={{ height: 30, width: 30 }}
               source={require('../assets/images/shopping.png')}
             />
             {cart.length > 0 && (
@@ -52,10 +81,7 @@ export default function Home({ navigation }) {
             onPress={() => setModalVisible(true)}
           >
             <Image
-              style={{
-                height: 30,
-                width: 30,
-              }}
+              style={{ height: 30, width: 30 }}
               source={require('../assets/images/setting.jpg')}
             />
           </TouchableOpacity>
@@ -63,21 +89,24 @@ export default function Home({ navigation }) {
       </View>
       <FlatList
         testID="product_list"
-        data={PRODUCTS}
+        data={paginatedData}
         renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => `${item.id}_${item.__page}_${item.__index}`}
         numColumns={2}
-        windowSize={20}
-        initialNumToRender={20}
+        onEndReachedThreshold={0.5}
+        onEndReached={loadMore}
+        ListFooterComponent={
+          loading ? (
+            <View style={{ padding: 20 }}>
+              <ActivityIndicator size="large" />
+            </View>
+          ) : null
+        }
       />
       <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text
-              style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 20 }}
-            >
-              Select Language
-            </Text>
+            <Text style={styles.modalTitle}>Select Language</Text>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
               <Text style={styles.languageOption}>English</Text>
             </TouchableOpacity>
@@ -124,6 +153,11 @@ const styles = StyleSheet.create({
     margin: 30,
     padding: 20,
     borderRadius: 10,
+  },
+  modalTitle: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginBottom: 20,
   },
   languageOption: { fontSize: 16, paddingVertical: 10 },
 });

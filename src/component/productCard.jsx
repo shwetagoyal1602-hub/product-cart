@@ -1,28 +1,27 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { CartContext } from '../context/cartContext';
 
-export default function ProductCard({ product }) {
-  const { cart, addToCart } = useContext(CartContext);
-  const [added, setAdded] = useState(false);
-
-  useEffect(() => {
-    const isAdded = cart.some(item => item.id === product.id);
-    setAdded(isAdded);
-  }, [cart]);
+export default function ProductCard({ product, uniqueId, visibleIndex }) {
+  const { addToCart, isAdded } = useContext(CartContext);
+  const added = isAdded(uniqueId);
 
   return (
     <View style={styles.card}>
-      <Text style={styles.name}>{product.name}</Text>
+      <Text>{product.name}</Text>
       <TouchableOpacity
-        testID={`product_${product.id}_add_button`}
-        style={[styles.button, added && styles.buttonAdded]}
-        onPress={() => {
-          if (!added) addToCart(product);
-          setAdded(true);
-        }}
+        testID={`product_${visibleIndex}_add_button`}
+        accessibilityLabel={`product_${visibleIndex}_add_button`}
+        disabled={added}
+        onPress={() =>
+          addToCart({
+            ...product,
+            uniqueId,
+          })
+        }
+        style={[styles.button, { backgroundColor: added ? '#aaa' : 'blue' }]}
       >
-        <Text style={styles.buttonText}>{added ? 'Added' : 'Add to Cart'}</Text>
+        <Text style={{ color: '#fff' }}>{added ? 'Added' : 'Add to Cart'}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -31,14 +30,16 @@ export default function ProductCard({ product }) {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    margin: 5,
+    margin: 10,
     padding: 15,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 10,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    elevation: 2,
+  },
+  button: {
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 5,
     alignItems: 'center',
   },
-  name: { marginBottom: 10, fontSize: 16 },
-  button: { backgroundColor: '#007bff', padding: 10, borderRadius: 5 },
-  buttonAdded: { backgroundColor: '#28a745' },
-  buttonText: { color: '#fff', fontWeight: 'bold' },
 });
